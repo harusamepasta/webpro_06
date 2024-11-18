@@ -109,7 +109,7 @@ app.get("/seikaku", (req, res) => {
   };
 
   console.log(display);
-  res.render('seikaaku', display);
+  res.render('seikaku', display);
 });
 
 
