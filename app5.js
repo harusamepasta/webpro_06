@@ -62,4 +62,56 @@ app.get("/janken", (req, res) => {
   res.render( 'janken', display );
 });
 
+app.get("/ryouri", (req, res) => {
+  const ingredient = req.query.ingredient; // ユーザーが入力した食材
+
+  const dishes = {
+    トマト: ['トマトパスタ', 'カプレーゼ', 'ミネストローネ'],
+    じゃがいも: ['ポテトサラダ', 'フライドポテト', 'じゃがバター'],
+    鶏肉: ['チキンカレー', '照り焼きチキン', '唐揚げ'],
+    卵: ['スクランブルエッグ', '卵かけご飯', '親子丼'],
+    チーズ: ['ピザ', 'グラタン', 'ダブルチーズバーガー']
+  };
+
+  // 提案料理をランダムに選ぶ
+  let suggestion = '';
+  if (dishes[ingredient]) {
+    suggestion = dishes[ingredient][Math.floor(Math.random() * dishes[ingredient].length)];
+  } else {
+    suggestion = '新しい料理を発明しましょう！';
+  }
+
+  const display = {
+    ingredient: ingredient,
+    suggestion: suggestion
+  };
+
+  console.log(display);
+  res.render('ryouri', display);
+});
+
+app.get("/seikaku", (req, res) => {
+  const input = req.query.word; // ユーザーが入力した言葉
+  const seikakuMap = {
+    青: '冷静で知的な性格です！',
+    赤: '情熱的でエネルギッシュな性格です！',
+    緑: '穏やかで協調性のある性格です！',
+    黄: '自由で冒険心にあふれています！',
+    白: '夢を追いかけるロマンチストです！',
+    黒: '自分の殻にこもりがちな性格です！'
+  };
+
+  let result = seikakuMap[input] || '個性的でユニークな性格ですね！';
+
+  const display = {
+    input: input,
+    result: result
+  };
+
+  console.log(display);
+  res.render('seikaaku', display);
+});
+
+
+
 app.listen(8080, () => console.log("Example app listening on port 8080!"));

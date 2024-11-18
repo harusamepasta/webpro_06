@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>本日の料理</title>
+</head>
+<body>
+  <h1>🍴 今日の昼ごはんを決めよう！ 🍴</h1>
+  <p>あなたが入力した食材は: <strong><%= ingredient %></strong></p>
+  <p>提案された料理は: <strong><%= suggestion %></strong></p>
+
+  <hr>
+  <form action="/ryouri" method="get">
+    <label for="ingredient">食材を入力してください:</label>
+    <input type="text" id="ingredient" name="ingredient" required>
+    <button type="submit">選ぶ</button>
+  </form>
+</body>
+</html>

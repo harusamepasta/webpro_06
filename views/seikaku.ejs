@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>性格診断</title>
+</head>
+<body>
+  <h1>🔮 性格診断 🔮</h1>
+  <p>あなたが入力した言葉は: <strong><%= input %></strong></p>
+  <p>診断結果: <strong><%= result %></strong></p>
+
+  <hr>
+  <form action="/seikaku" method="get">
+    <label for="word">好きな言葉や色を入力してください:</label>
+    <input type="text" id="word" name="word" required>
+    <button type="submit">診断する</button>
+  </form>
+</body>
+</html>
