@@ -1,6 +1,8 @@
 "use strict";
 const express = require("express");
 const app = express();
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 
 let bbs = [];  // 本来はDBMSを使用するが，今回はこの変数にデータを蓄える
 
@@ -105,25 +107,60 @@ app.post("/post", (req, res) => {
   res.json( {number: bbs.length } );
 });
 
-app.post('/like', (req, res) => {
-    const { postId } = req.body;
-    // 投稿の「いいね」数を1増加
-    db.posts.updateOne({ _id: postId }, { $inc: { likes: 1 } });
-    res.json({ success: true, message: "いいねしました" });
+app.post('/search', (req, res) => {
+  const keyword = req.body.keyword;
+  const results = bbs.filter(post => 
+      post.name.includes(keyword) || post.message.includes(keyword)
+  );
+  res.json({ messages: results });
 });
 
-app.post('/edit-comment', (req, res) => {
-    const { commentId, newContent } = req.body;
-    // コメントの内容を更新
-    db.comments.updateOne({ _id: commentId }, { $set: { content: newContent } });
-    res.json({ success: true, message: "コメントを編集しました" });
+const session = require('express-session');
+
+app.use(session({
+    secret: 'secret-key',
+    resave: false,
+    saveUninitialized: true
+}));
+
+app.post('/login', (req, res) => {
+    const username = req.body.username;
+    if (username) {
+        req.session.username = username;
+        res.json({ success: true });
+    } else {
+        res.json({ success: false });
+    }
 });
 
-app.post('/notify', (req, res) => {
-    const { message } = req.body;
-    console.log("新着通知: ", message);
-    res.json({ success: true, message: "通知を送信しました" });
+app.post('/gacha', (req, res) => {
+  // ガチャ結果の定義
+  const gachaResults = [
+      { result: "スーパーレアアイテム", rarity: "SSR", chance: 1 },  // 1%
+      { result: "レアアイテム", rarity: "SR", chance: 10 },         // 10%
+      { result: "通常アイテム", rarity: "R", chance: 30 },          // 30%
+      { result: "ハズレ", rarity: "N", chance: 59 }                 // 59%
+  ];
+
+  // ランダムに結果を選択
+  const randomNumber = Math.random() * 100;
+  let cumulativeChance = 0;
+  let selectedResult = null;
+
+  for (let item of gachaResults) {
+      cumulativeChance += item.chance;
+      if (randomNumber < cumulativeChance) {
+          selectedResult = item;
+          break;
+      }
+  }
+
+  res.json({
+      result: selectedResult.result,
+      rarity: selectedResult.rarity
+  });
 });
+
 
 
 app.listen(8080, () => console.log("Example app listening on port 8080!"));

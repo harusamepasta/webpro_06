@@ -87,7 +87,7 @@ document.querySelector('#check').addEventListener('click', () => {
     });
 });
 
-document.querySelectorAll('.like-button').forEach(button => {
+/*document.querySelectorAll('.like-button').forEach(button => {
     button.addEventListener('click', () => {
         const postId = button.dataset.postId;
 
@@ -162,4 +162,74 @@ document.querySelector('#notify').addEventListener('click', () => {
             console.log(response.message);
             document.querySelector('#notificationMessage').value = "";
         });
+});*/
+
+document.querySelector('#search-btn').addEventListener('click', () => {
+    const keyword = document.querySelector('#search').value;
+
+    const params = {
+        method: "POST",
+        body: 'keyword=' + encodeURIComponent(keyword),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    };
+    fetch('/search', params)
+    .then(response => response.json())
+    .then(response => {
+        bbs.innerHTML = ""; // 検索結果を表示するためリセット
+        for (let mes of response.messages) {
+            let cover = document.createElement('div');
+            cover.className = 'cover';
+            let name_area = document.createElement('span');
+            name_area.className = 'name';
+            name_area.innerText = mes.name;
+            let mes_area = document.createElement('span');
+            mes_area.className = 'mes';
+            mes_area.innerText = mes.message;
+            cover.appendChild(name_area);
+            cover.appendChild(mes_area);
+            bbs.appendChild(cover);
+        }
+    });
 });
+
+document.querySelector('#login-btn').addEventListener('click', () => {
+    const username = document.querySelector('#username').value;
+
+    const params = {
+        method: "POST",
+        body: 'username=' + encodeURIComponent(username),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    };
+    fetch('/login', params)
+    .then(response => response.json())
+    .then(response => {
+        if (response.success) {
+            alert('ログイン成功');
+            document.querySelector('#name').value = username; // 自動入力
+        } else {
+            alert('ログイン失敗');
+        }
+    });
+});
+
+document.querySelector('#gacha-btn').addEventListener('click', () => {
+    const params = {
+        method: "POST",
+        body: '',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    };
+
+    fetch('/gacha', params)
+    .then(response => response.json())
+    .then(response => {
+        const resultDiv = document.querySelector('#gacha-result');
+        resultDiv.innerText = `結果: ${response.result} (レアリティ: ${response.rarity})`;
+    });
+});
+
